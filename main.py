@@ -1,6 +1,11 @@
 import requests
 
+
+class ErrRedirection(Exception):
+    pass
+
 for id in range(1, 11):
+
 
     payload = {"id": id }
     filename = f'book_{id}.txt'
@@ -9,8 +14,6 @@ for id in range(1, 11):
     response.raise_for_status()
     with open(filename, 'wb') as file:
         file.write(response.content)
-    class ErrRedirection(Exception):
-    pass
 def check_for_redirect(response):
     if response.history:
-        raise ErrRedirection("Redirection"))
+        raise ErrRedirection("Redirection")
