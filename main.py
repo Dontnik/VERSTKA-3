@@ -36,6 +36,7 @@ def make_path(filename):
 
 if __name__ == '__main__':
     os.makedirs('books', exist_ok=True)
+    os.makedirs('covers', exist_ok=True)
     for book_id in range(1, 11):
         try:
             url = f'https://tululu.org/b{book_id}/'
@@ -45,7 +46,13 @@ if __name__ == '__main__':
             check_for_redirect(response)
             page_content = response.text
             soup = BeautifulSoup(page_content, 'lxml')
-            print(urllib.parse.urljoin('https://tululu.org/', soup.find('img')))
+            print(soup.find('bookimage'))
+            covers_url = urllib.parse.urljoin('https://tululu.org/', soup.find('div', class_='bookimage').find('img')['src'])
+            response = requests.get(covers_url)
+            response.raise_for_status()
+            file_path2 = f'covers/cover_{book_id}.jpg'
+            with open(file_path2, 'wb') as file:
+                file.write(response.content)
             author, book_name = parse_book_page(page_content)
             filename = f'{book_name}.txt'
             file_path = make_path(filename)
