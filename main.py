@@ -37,6 +37,7 @@ def make_path(filename):
 if __name__ == '__main__':
     os.makedirs('books', exist_ok=True)
     os.makedirs('covers', exist_ok=True)
+    os.makedirs('comments', exist_ok=True)
     for book_id in range(1, 11):
         try:
             url = f'https://tululu.org/b{book_id}/'
@@ -48,10 +49,16 @@ if __name__ == '__main__':
             soup = BeautifulSoup(page_content, 'lxml')
             print(soup.find('bookimage'))
             covers_url = urllib.parse.urljoin('https://tululu.org/', soup.find('div', class_='bookimage').find('img')['src'])
+            file_path2 = f'comments/comment_{book_id}.txt'
+            comments = soup.find_all('span', class_='black')
+            comments = [comment.text for comment in comments]
+            with open(file_path2, 'w', encoding='UTF-8') as file:
+                file.write('\n'.join(comments))
+
             response = requests.get(covers_url)
             response.raise_for_status()
-            file_path2 = f'covers/cover_{book_id}.jpg'
-            with open(file_path2, 'wb') as file:
+            file_path3 = f'covers/cover_{book_id}.jpg'
+            with open(file_path3, 'wb') as file:
                 file.write(response.content)
             author, book_name = parse_book_page(page_content)
             filename = f'{book_name}.txt'
