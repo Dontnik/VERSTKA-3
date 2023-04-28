@@ -38,6 +38,7 @@ if __name__ == '__main__':
     os.makedirs('books', exist_ok=True)
     os.makedirs('covers', exist_ok=True)
     os.makedirs('comments', exist_ok=True)
+    os.makedirs('genres', exist_ok=True)
     for book_id in range(1, 11):
         try:
             url = f'https://tululu.org/b{book_id}/'
@@ -50,6 +51,11 @@ if __name__ == '__main__':
             print(soup.find('bookimage'))
             covers_url = urllib.parse.urljoin('https://tululu.org/', soup.find('div', class_='bookimage').find('img')['src'])
             file_path2 = f'comments/comment_{book_id}.txt'
+            file_path4 = f'genres/genre_{book_id}.txt'
+            genres = soup.find_all('span',  class_='d_book')
+            genres = [genre.text for genre in genres]
+            with open(file_path4, 'w', encoding='UTF-8') as file:
+                file.write('\n'.join(genres))
             comments = soup.find_all('span', class_='black')
             comments = [comment.text for comment in comments]
             with open(file_path2, 'w', encoding='UTF-8') as file:
