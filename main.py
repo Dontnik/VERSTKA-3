@@ -1,4 +1,5 @@
 import requests
+from tqdm import tqdm
 import os
 import urllib
 from bs4 import BeautifulSoup
@@ -41,36 +42,37 @@ if __name__ == '__main__':
     os.makedirs('genres', exist_ok=True)
     start_id = int(input('Введите первое число:  '))
     end_id = int(input('Введите второе число:  '))
-    for book_id in range(start_id, end_id):
-        try:
-            url = f'https://tululu.org/b{book_id}/'
-            response = requests.get(url)
-            response.raise_for_status()
-            print(response.history)
-            check_for_redirect(response)
-            page_content = response.text
-            soup = BeautifulSoup(page_content, 'lxml')
-            print(soup.find('bookimage'))
-            covers_url = urllib.parse.urljoin('https://tululu.org/', soup.find('div', class_='bookimage').find('img')['src'])
-            file_path2 = f'comments/comment_{book_id}.txt'
-            file_path4 = f'genres/genre_{book_id}.txt'
-            genres = soup.find_all('span',  class_='d_book')
-            genres = [genre.text for genre in genres]
-            with open(file_path4, 'w', encoding='UTF-8') as file:
-                file.write('\n'.join(genres))
-            comments = soup.find_all('span', class_='black')
-            comments = [comment.text for comment in comments]
-            with open(file_path2, 'w', encoding='UTF-8') as file:
-                file.write('\n'.join(comments))
+    for i in tqdm(range(10000)):
+        for book_id in range(start_id, end_id):
+            try:
+                url = f'https://tululu.org/b{book_id}/'
+                response = requests.get(url)
+                response.raise_for_status()
+                print(response.history)
+                check_for_redirect(response)
+                page_content = response.text
+                soup = BeautifulSoup(page_content, 'lxml')
+                print(soup.find('bookimage'))
+                covers_url = urllib.parse.urljoin('https://tululu.org/', soup.find('div', class_='bookimage').find('img')['src'])
+                file_path2 = f'comments/comment_{book_id}.txt'
+                file_path4 = f'genres/genre_{book_id}.txt'
+                genres = soup.find_all('span',  class_='d_book')
+                genres = [genre.text for genre in genres]
+                with open(file_path4, 'w', encoding='UTF-8') as file:
+                    file.write('\n'.join(genres))
+                comments = soup.find_all('span', class_='black')
+                comments = [comment.text for comment in comments]
+                with open(file_path2, 'w', encoding='UTF-8') as file:
+                    file.write('\n'.join(comments))
 
-            response = requests.get(covers_url)
-            response.raise_for_status()
-            file_path3 = f'covers/cover_{book_id}.jpg'
-            with open(file_path3, 'wb') as file:
-                file.write(response.content)
-            author, book_name = parse_book_page(page_content)
-            filename = f'{book_name}.txt'
-            file_path = make_path(filename)
-            download_book(book_id, file_path)
-        except ErrRedirection:
-            print('Перенаправление')
+                response = requests.get(covers_url)
+                response.raise_for_status()
+                file_path3 = f'covers/cover_{book_id}.jpg'
+                with open(file_path3, 'wb') as file:
+                    file.write(response.content)
+                author, book_name = parse_book_page(page_content)
+                filename = f'{book_name}.txt'
+                file_path = make_path(filename)
+                download_book(book_id, file_path)
+            except ErrRedirection:
+                print('Перенаправление')
