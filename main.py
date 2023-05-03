@@ -39,7 +39,9 @@ if __name__ == '__main__':
     os.makedirs('covers', exist_ok=True)
     os.makedirs('comments', exist_ok=True)
     os.makedirs('genres', exist_ok=True)
-    for book_id in range(1, 11):
+    start_id = int(input('Введите первое число:  '))
+    end_id = int(input('Введите второе число:  '))
+    for book_id in range(start_id, end_id):
         try:
             url = f'https://tululu.org/b{book_id}/'
             response = requests.get(url)
