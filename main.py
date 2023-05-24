@@ -72,10 +72,8 @@ if __name__ == '__main__':
                 check_for_redirect(response)
                 page_content = response.text
                 soup = BeautifulSoup(page_content, 'lxml')
-                covers_url = urllib.parse.urljoin(url, soup.find('div', class_='bookimage').find('img')['src'])
-                parse_book_page(page_content, book_id)
-                covers_download(covers_url, book_id)
                 author, book_name, covers_url = parse_book_page(page_content, book_id)
+                covers_download(covers_url, book_id)
                 file_path = f'books/{book_name}.txt'
                 download_book(book_id, file_path)
                 break
