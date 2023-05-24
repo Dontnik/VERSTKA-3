@@ -23,16 +23,6 @@ def parse_book_page(page_content, book_id):
     book_name, author = author_and_name.split('::')
 
     covers_url = urllib.parse.urljoin(url, soup.find('div', class_='bookimage').find('img')['src'])
-    file_path_comments = f'comments/comment_{book_id}.txt'
-    file_path_genres = f'genres/genre_{book_id}.txt'
-    genres = soup.find_all('span', class_='d_book')
-    genres = [genre.text for genre in genres]
-    with open(file_path_genres, 'w', encoding='UTF-8') as file:
-        file.write('\n'.join(genres))
-    comments = soup.find_all('span', class_='black')
-    comments = [comment.text for comment in comments]
-    with open(file_path_comments, 'w', encoding='UTF-8') as file:
-        file.write('\n'.join(comments))
     return author, book_name, covers_url
 
 
@@ -73,8 +63,18 @@ if __name__ == '__main__':
                 page_content = response.text
                 soup = BeautifulSoup(page_content, 'lxml')
                 author, book_name, covers_url = parse_book_page(page_content, book_id)
+                file_path_comments = f'comments/comment_{book_id}.txt'
+                file_path_genres = f'genres/genre_{book_id}.txt'
                 covers_download(covers_url, book_id)
                 file_path = f'books/{book_name}.txt'
+                genres = soup.find_all('span', class_='d_book')
+                genres = [genre.text for genre in genres]
+                with open(file_path_genres, 'w', encoding='UTF-8') as file:
+                    file.write('\n'.join(genres))
+                comments = soup.find_all('span', class_='black')
+                comments = [comment.text for comment in comments]
+                with open(file_path_comments, 'w', encoding='UTF-8') as file:
+                    file.write('\n'.join(comments))
                 download_book(book_id, file_path)
                 break
             except ErrRedirection:
