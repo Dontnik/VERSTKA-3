@@ -22,7 +22,7 @@ def parse_book_page(page_content, book_id):
     author_and_name = soup.find('h1').text
     book_name, author = author_and_name.split('::')
 
-    covers_url = urllib.parse.urljoin(url, soup.find('div', class_='bookimage').find('img')['src'])
+    cover_url = urllib.parse.urljoin(url, soup.find('div', class_='bookimage').find('img')['src'])
     return author, book_name, covers_url
 
 
@@ -35,11 +35,11 @@ def download_book(book_id, file_path):
     with open(file_path, 'wb') as file:
         file.write(response.content)
 
-def covers_download(covers_url, book_id):
+def cover_download(covers_url, book_id):
     response = requests.get(covers_url)
     response.raise_for_status()
-    file_path_covers = f'covers/cover_{book_id}.jpg'
-    with open(file_path_covers, 'wb') as file:
+    file_path_cover = f'covers/cover_{book_id}.jpg'
+    with open(file_path_cover, 'wb') as file:
         file.write(response.content)
 
 if __name__ == '__main__':
@@ -65,7 +65,7 @@ if __name__ == '__main__':
                 author, book_name, covers_url = parse_book_page(page_content, book_id)
                 file_path_comments = f'comments/comment_{book_id}.txt'
                 file_path_genres = f'genres/genre_{book_id}.txt'
-                covers_download(covers_url, book_id)
+                cover_download(covers_url, book_id)
                 file_path = f'books/{book_name}.txt'
                 genres = soup.find_all('span', class_='d_book')
                 genres = [genre.text for genre in genres]
