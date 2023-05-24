@@ -63,29 +63,28 @@ if __name__ == '__main__':
     start_id = parser.add_argument("start_id", help="first number", type=int)
     end_id = parser.add_argument("end_id", help="second number", type=int)
     args = parser.parse_args()
-    for book in tqdm(range(args.end_id)):
-        for book_id in range(args.start_id, args.end_id):
-            while True:
-                try:
-                    url = f'https://tululu.org/b{book_id}/'
-                    response = requests.get(url)
-                    response.raise_for_status()
-                    check_for_redirect(response)
-                    page_content = response.text
-                    soup = BeautifulSoup(page_content, 'lxml')
-                    covers_url = urllib.parse.urljoin(url, soup.find('div', class_='bookimage').find('img')['src'])
-                    parse_book_page(page_content, book_id)
-                    covers_download(covers_url, book_id)
-                    author, book_name, covers_url = parse_book_page(page_content, book_id)
-                    file_path = f'books/{book_name}.txt'
-                    download_book(book_id, file_path)
-                    break
-                except ErrRedirection:
-                    logging.warning("Перенаправление")
-                    break
-                except requests.exceptions.ConnectionError:
-                    logging.warning("Потеряно соединение")
-                    time.sleep(4)
-                except requests.exceptions.HTTPError:
-                    logging.exception("Ошибка при запросе")
-                    break
+    for book_id in range(args.start_id, args.end_id):
+        while True:
+            try:
+                url = f'https://tululu.org/b{book_id}/'
+                response = requests.get(url)
+                response.raise_for_status()
+                check_for_redirect(response)
+                page_content = response.text
+                soup = BeautifulSoup(page_content, 'lxml')
+                covers_url = urllib.parse.urljoin(url, soup.find('div', class_='bookimage').find('img')['src'])
+                parse_book_page(page_content, book_id)
+                covers_download(covers_url, book_id)
+                author, book_name, covers_url = parse_book_page(page_content, book_id)
+                file_path = f'books/{book_name}.txt'
+                download_book(book_id, file_path)
+                break
+            except ErrRedirection:
+                logging.warning("Перенаправление")
+                break
+            except requests.exceptions.ConnectionError:
+                logging.warning("Потеряно соединение")
+                time.sleep(4)
+            except requests.exceptions.HTTPError:
+                logging.exception("Ошибка при запросе")
+                break
