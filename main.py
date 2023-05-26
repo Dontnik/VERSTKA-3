@@ -63,17 +63,17 @@ if __name__ == '__main__':
                 page_content = response.text
                 soup = BeautifulSoup(page_content, 'lxml')
                 author, book_name, covers_url = parse_book_page(page_content, book_id)
-                file_path_comments = f'comments/comment_{book_id}.txt'
-                file_path_genres = f'genres/genre_{book_id}.txt'
+                comments_file_path = f'comments/comment_{book_id}.txt'
+                genres_file_path = f'genres/genre_{book_id}.txt'
                 cover_download(covers_url, book_id)
                 file_path = f'books/{book_name}.txt'
                 genres = soup.find_all('span', class_='d_book')
                 genres = [genre.text for genre in genres]
-                with open(file_path_genres, 'w', encoding='UTF-8') as file:
+                with open(genres_file_path, 'w', encoding='UTF-8') as file:
                     file.write('\n'.join(genres))
                 comments = soup.find_all('span', class_='black')
                 comments = [comment.text for comment in comments]
-                with open(file_path_comments, 'w', encoding='UTF-8') as file:
+                with open(comments_file_path, 'w', encoding='UTF-8') as file:
                     file.write('\n'.join(comments))
                 download_book(book_id, file_path)
                 break
