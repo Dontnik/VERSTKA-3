@@ -23,7 +23,11 @@ def parse_book_page(page_content):
     book_name, author = author_and_name.split('::')
     url = f'https://tululu.org/b{book_id}/'
     cover_url = urllib.parse.urljoin(url, soup.find('div', class_='bookimage').find('img')['src'])
-    return author, book_name, cover_url
+    genres = soup.find_all('span', class_='d_book')
+    genres = [genre.text for genre in genres]
+    comments = soup.find_all('span', class_='black')
+    comments = [comment.text for comment in comments]
+    return author, book_name, cover_url, genres, comments
 
 
 def download_book(book_id, file_path):
@@ -67,12 +71,10 @@ if __name__ == '__main__':
                 genres_file_path = f'genres/genre_{book_id}.txt'
                 cover_download(covers_url, book_id)
                 file_path = f'books/{book_name}.txt'
-                genres = soup.find_all('span', class_='d_book')
-                genres = [genre.text for genre in genres]
+                genres = parse_book_page(page_content)
                 with open(genres_file_path, 'w', encoding='UTF-8') as file:
                     file.write('\n'.join(genres))
-                comments = soup.find_all('span', class_='black')
-                comments = [comment.text for comment in comments]
+                    comments = parse_book_page(page_content)
                 with open(comments_file_path, 'w', encoding='UTF-8') as file:
                     file.write('\n'.join(comments))
                 download_book(book_id, file_path)
