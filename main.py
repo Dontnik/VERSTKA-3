@@ -17,7 +17,7 @@ def check_for_redirect(response):
         raise ErrRedirection("Redirection")
 
 
-def parse_book_page(page_content, book_id):
+def parse_book_page(page_content):
     soup = BeautifulSoup(page_content, 'lxml')
     author_and_name = soup.find('h1').text
     book_name, author = author_and_name.split('::')
