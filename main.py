@@ -21,9 +21,9 @@ def parse_book_page(page_content):
     soup = BeautifulSoup(page_content, 'lxml')
     author_and_name = soup.find('h1').text
     book_name, author = author_and_name.split('::')
-
+    url = f'https://tululu.org/b{book_id}/'
     cover_url = urllib.parse.urljoin(url, soup.find('div', class_='bookimage').find('img')['src'])
-    return author, book_name, covers_url
+    return author, book_name, cover_url
 
 
 def download_book(book_id, file_path):
